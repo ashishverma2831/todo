@@ -1,6 +1,6 @@
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
-import { Button, Card, Text } from 'react-native-paper'
+import { AnimatedFAB, Button, Card, Text } from 'react-native-paper'
 
 const TaskCard = ({ text, completed, createdAt }) => {
     return <Card style={{ marginBottom: 10 }}>
@@ -63,6 +63,13 @@ const ListTodo = () => {
 
     return (
         <View style={styles.container}>
+
+            <AnimatedFAB 
+                icon={'plus'}
+                label='Add Task'
+                style={styles.fab}
+                extended={true}
+            />
             <View style={styles.header}>
                 <Text>List Todo</Text>
             </View>
@@ -95,5 +102,11 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         padding: 10,
+    },
+    fab:{
+        position: 'absolute',
+        right: 20,
+        bottom: 20,
+        zIndex: 10,
     }
 })
