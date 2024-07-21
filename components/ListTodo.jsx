@@ -1,6 +1,7 @@
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
 import { AnimatedFAB, Button, Card, Text } from 'react-native-paper'
+import CreateTodo from './CreateTodo'
 
 const TaskCard = ({ text, completed, createdAt }) => {
     return <Card style={{ marginBottom: 10 }}>
@@ -41,6 +42,8 @@ const ListTodo = () => {
         { text: 'Learn Typescript', completed: false, createdAt: new Date() },
     ]);
 
+    const [showTodoForm, setShowTodoForm] = useState(false);
+
     const displayList = () => {
         return <ScrollView style={styles.scrollContent}>
             {
@@ -69,9 +72,11 @@ const ListTodo = () => {
                 label='Add Task'
                 style={styles.fab}
                 extended={true}
+                onPress={() => setShowTodoForm(true)}
             />
+            <CreateTodo visible={showTodoForm} setVisible={setShowTodoForm} taskList={taskList} setTaskList={setTaskList} />
             <View style={styles.header}>
-                <Text>List Todo</Text>
+                <Text variant='headlineMedium' style={styles.title}>List Todo</Text>
             </View>
             <View style={styles.content}>
                 {/* {displayList()} */}
@@ -108,5 +113,9 @@ const styles = StyleSheet.create({
         right: 20,
         bottom: 20,
         zIndex: 10,
-    }
+    },
+    title: {
+        textAlign: 'center',
+        marginVertical: 20
+    },
 })
