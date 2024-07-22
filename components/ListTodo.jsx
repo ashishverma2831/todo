@@ -3,14 +3,15 @@ import React, { useState } from 'react'
 import { AnimatedFAB, Button, Card, Text } from 'react-native-paper'
 import CreateTodo from './CreateTodo'
 
-const TaskCard = ({ text, completed, createdAt }) => {
+const TaskCard = ({index, deleteTodo, editTodo, text, completed, createdAt }) => {
     return <Card style={{ marginBottom: 10 }}>
         <Card.Content>
+            <Text>{createdAt.toDateString()} {createdAt.toLocaleTimeString()}</Text>
             <Text>{text}</Text>
         </Card.Content>
         <Card.Actions>
-            <Button icon={'pencil'}>Edit</Button>
-            <Button icon={'delete'}>Delete</Button>
+            <Button icon={'pencil'} onPress={()=> editTodo(index)}>Edit</Button>
+            <Button icon={'delete'} onPress={()=> deleteTodo(index)}>Delete</Button>
         </Card.Actions>
     </Card>
 }
@@ -19,28 +20,7 @@ const TaskCard = ({ text, completed, createdAt }) => {
 
 const ListTodo = () => {
 
-    const [taskList, setTaskList] = useState([
-        { text: 'Learn React Native', completed: false, createdAt: new Date() },
-        { text: 'Learn Firebase', completed: false, createdAt: new Date() },
-        { text: 'Learn VueJS', completed: false, createdAt: new Date() },
-        { text: 'Learn NextJS', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-        { text: 'Learn Typescript', completed: false, createdAt: new Date() },
-    ]);
+    const [taskList, setTaskList] = useState([]);
 
     const [showTodoForm, setShowTodoForm] = useState(false);
 
@@ -63,6 +43,12 @@ const ListTodo = () => {
             }
         </ScrollView>
     }
+    const deleteTodo = (index)=>{
+        setTaskList(...taskList.filter((task, i) => i !== index));
+    }
+    const editTodo = (index)=>{
+        
+    }
 
     return (
         <View style={styles.container}>
@@ -74,7 +60,7 @@ const ListTodo = () => {
                 extended={true}
                 onPress={() => setShowTodoForm(true)}
             />
-            <CreateTodo visible={showTodoForm} setVisible={setShowTodoForm} taskList={taskList} setTaskList={setTaskList} />
+            <CreateTodo editTodo={editTodo} visible={showTodoForm} setVisible={setShowTodoForm} taskList={taskList} setTaskList={setTaskList} />
             <View style={styles.header}>
                 <Text variant='headlineMedium' style={styles.title}>List Todo</Text>
             </View>
@@ -82,8 +68,9 @@ const ListTodo = () => {
                 {/* {displayList()} */}
                 <FlatList 
                     data={taskList}
-                    renderItem={({ item }) => <TaskCard {...item} />}
+                    renderItem={({ item,index }) => <TaskCard {...item} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
                     keyExtractor={(item, index) => {return index}}
+                    ListEmptyComponent={()=> <Text style={{fontSize:30, fontWeight:'bold',color:'#999',textAlign:'center',marginTop:40}}>No Task Available</Text>}
                 />
             </View>
         </View>

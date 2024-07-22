@@ -16,7 +16,7 @@ const CreateTodo = ({visible,setVisible,taskList,setTaskList}) => {
   }
 
   return (
-    <Modal visible={visible} onRequestClose={()=> setVisible(false)} >
+    <Modal visible={visible} onRequestClose={()=> setVisible(false)} animationType='slide' > 
       <View style={styles.container} >
         <Text variant='headlineMedium' style={styles.title} >Create Todo</Text>
         <TextInput onChangeText={setTaskText} label={'Task to be added'} multiline numberOfLines={6} />
