@@ -21,8 +21,8 @@ const TaskCard = ({index, deleteTodo, editTodo, text, completed, createdAt }) =>
 const ListTodo = () => {
 
     const [taskList, setTaskList] = useState([]);
-
     const [showTodoForm, setShowTodoForm] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const displayList = () => {
         return <ScrollView style={styles.scrollContent}>
@@ -43,16 +43,18 @@ const ListTodo = () => {
             }
         </ScrollView>
     }
+
     const deleteTodo = (index)=>{
-        setTaskList(...taskList.filter((task, i) => i !== index));
+        setTaskList(taskList.filter((task, i) => i !== index));
     }
     const editTodo = (index)=>{
-        
+        console.log(index);
+        console.log(isEditing);
+        setIsEditing(!isEditing);
     }
 
     return (
         <View style={styles.container}>
-
             <AnimatedFAB 
                 icon={'plus'}
                 label='Add Task'
@@ -68,7 +70,7 @@ const ListTodo = () => {
                 {/* {displayList()} */}
                 <FlatList 
                     data={taskList}
-                    renderItem={({ item,index }) => <TaskCard {...item} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
+                    renderItem={({ item,index }) => <TaskCard {...item} isEditing={isEditing} setIsEditing={setIsEditing} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
                     keyExtractor={(item, index) => {return index}}
                     ListEmptyComponent={()=> <Text style={{fontSize:30, fontWeight:'bold',color:'#999',textAlign:'center',marginTop:40}}>No Task Available</Text>}
                 />
