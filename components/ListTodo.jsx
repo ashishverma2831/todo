@@ -1,16 +1,24 @@
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
-import { AnimatedFAB, Button, Card, Text } from 'react-native-paper'
+import { AnimatedFAB, Button, Card, Text,TextInput } from 'react-native-paper'
 import CreateTodo from './CreateTodo'
 
-const TaskCard = ({index, deleteTodo, editTodo, text, completed, createdAt }) => {
+const TaskCard = ({index, isEditing, setIsEditing, deleteTodo, editTodo, text, completed, createdAt }) => {
+    const updatedTask = (index,text) => {
+        console.log(text);
+    }    
     return <Card style={{ marginBottom: 10 }}>
         <Card.Content>
             <Text>{createdAt.toDateString()} {createdAt.toLocaleTimeString()}</Text>
-            <Text>{text}</Text>
+            {/* <Text style={{fontSize:30}}>{text}</Text> */}
+            <View style={styles.taskContainer}>
+                { isEditing && isEditing.status && isEditing.index === index ? <TextInput value={text} onChangeText={()=>{updatedTask(index,text)}} /> : <Text style={{fontSize:24}}>{text}</Text>}
+            </View>
         </Card.Content>
         <Card.Actions>
-            <Button icon={'pencil'} onPress={()=> editTodo(index)}>Edit</Button>
+            {
+                isEditing && isEditing.status  && isEditing.index === index ? <Button icon={'content-save'} onPress={()=> setIsEditing(false)}>Save</Button> : <Button icon={'pencil'} onPress={()=> editTodo(index)}>Edit</Button>
+            }
             <Button icon={'delete'} onPress={()=> deleteTodo(index)}>Delete</Button>
         </Card.Actions>
     </Card>
@@ -22,27 +30,32 @@ const ListTodo = () => {
 
     const [taskList, setTaskList] = useState([]);
     const [showTodoForm, setShowTodoForm] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState({
+        status: false,
+        index: null
+    });
 
-    const displayList = () => {
-        return <ScrollView style={styles.scrollContent}>
-            {
-                taskList.map((task, index) => {
-                    return (
-                        <Card key={index} style={{ marginBottom: 10 }}>
-                            <Card.Content>
-                                <Text>{task.text}</Text>
-                            </Card.Content>
-                            <Card.Actions>
-                                <Button icon={'pencil'}>Edit</Button>
-                                <Button icon={'delete'}>Delete</Button>
-                            </Card.Actions>
-                        </Card>
-                    )
-                })
-            }
-        </ScrollView>
-    }
+    // console.log(taskList);
+
+    // const displayList = () => {
+    //     return <ScrollView style={styles.scrollContent}>
+    //         {
+    //             taskList.map((task, index) => {
+    //                 return (
+    //                     <Card key={index} style={{ marginBottom: 10 }}>
+    //                         <Card.Content>
+    //                             <Text>{task.text}</Text>
+    //                         </Card.Content>
+    //                         <Card.Actions>
+    //                             <Button icon={'pencil'}>Edit</Button>
+    //                             <Button icon={'delete'}>Delete</Button>
+    //                         </Card.Actions>
+    //                     </Card>
+    //                 )
+    //             })
+    //         }
+    //     </ScrollView>
+    // }
 
     const deleteTodo = (index)=>{
         setTaskList(taskList.filter((task, i) => i !== index));
@@ -50,7 +63,10 @@ const ListTodo = () => {
     const editTodo = (index)=>{
         console.log(index);
         console.log(isEditing);
-        setIsEditing(!isEditing);
+        setIsEditing({
+            status: !isEditing.status,
+            index: index
+        });
     }
 
     return (
@@ -106,5 +122,5 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
         marginVertical: 20
-    },
+    }
 })
