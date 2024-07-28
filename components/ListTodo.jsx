@@ -60,6 +60,7 @@ const ListTodo = () => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
     const [showFeedback, setShowFeedback] = useState(false);
+    const [btnExtended, setBtnExtended] = useState(false);
 
     // const [isEditing, setIsEditing] = useState({
     //     status: false,
@@ -133,14 +134,20 @@ const ListTodo = () => {
         setMenuVisible(false);
     }
 
+    const handleListScroll = ({nativeEvent}) => {
+        const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+        console.log(currentScrollPosition);
+        setBtnExtended(currentScrollPosition <= 0 || nativeEvent?.velocity?.y < 0);
+    }
+
     return (
         <View style={styles.container}>
             <AnimatedFAB
                 icon={'plus'}
                 label='Add Task'
                 style={styles.fab}
-                extended={true}
                 onPress={() => setShowTodoForm(true)}
+                extended={btnExtended}
             />
             <Appbar.Header style={{backgroundColor:'crimson'}}>
                 <Appbar.Content title="Todo" color='#fff' />
@@ -177,6 +184,7 @@ const ListTodo = () => {
             <View style={styles.content}>
                 {/* {displayList()} */}
                 <FlatList
+                    onScroll={handleListScroll}
                     data={taskList}
                     renderItem={({ item, index }) => <TaskCard {...item} taskList={taskList} setTaskList={setTaskList} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
                     keyExtractor={(item, index) => { return index }}
