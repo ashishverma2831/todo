@@ -1,6 +1,6 @@
 import { FlatList, Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
-import { AnimatedFAB, Button, Card, Checkbox, Divider, IconButton, Menu, Provider, Text, TextInput } from 'react-native-paper'
+import { AnimatedFAB, Button, Card, Checkbox, Divider, IconButton, Menu, Provider, Snackbar, Text, TextInput } from 'react-native-paper'
 import CreateTodo from './CreateTodo'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -58,6 +58,9 @@ const ListTodo = () => {
     const [taskList, setTaskList] = useState([]);
     const [showTodoForm, setShowTodoForm] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+    const [showFeedback, setShowFeedback] = useState(false);
+
     // const [isEditing, setIsEditing] = useState({
     //     status: false,
     //     index: null
@@ -84,6 +87,17 @@ const ListTodo = () => {
     //         }
     //     </ScrollView>
     // }
+    const handleMenuPress = (event) => {
+        const { nativeEvent } = event;
+        console.log(nativeEvent);
+        const anchor = {
+            x: nativeEvent.pageX,
+            y: nativeEvent.pageY - 20
+        };
+
+        setMenuAnchor(anchor);
+        setMenuVisible(true);
+    }
 
     const deleteTodo = (index) => {
         setTaskList(taskList.filter((task, i) => i !== index));
@@ -97,6 +111,28 @@ const ListTodo = () => {
         });
     }
 
+    const sortAtoZ = () => {
+        const temp = taskList;
+        temp.sort((a, b) => a.text.localeCompare(b.text));
+        setTaskList([...temp]);
+        setShowFeedback(true);
+        setMenuVisible(false);
+    }
+    const sortCompleted = () => {
+        const temp = taskList;
+        temp.sort((a, b) => a.completed - b.completed);
+        setTaskList([...temp]);
+        setShowFeedback(true);
+        setMenuVisible(false);
+    }
+    const sortDate = () => {
+        const temp = taskList;
+        temp.sort((a, b) => b.createdAt - a.createdAt);
+        setTaskList([...temp]);
+        setShowFeedback(true);
+        setMenuVisible(false);
+    }
+
     return (
         <View style={styles.container}>
             <AnimatedFAB
@@ -106,27 +142,38 @@ const ListTodo = () => {
                 extended={true}
                 onPress={() => setShowTodoForm(true)}
             />
+            <Snackbar
+                visible={showFeedback}
+                onDismiss={()=>{setShowFeedback(false)}}
+                duration={1000}
+                action={{
+                    label: 'Ok',
+                    onPress:()=>{
+                        setShowFeedback(false);
+                    }
+                }}>
+                Task Sorted
+            </Snackbar>
             <CreateTodo editTodo={editTodo} visible={showTodoForm} setVisible={setShowTodoForm} taskList={taskList} setTaskList={setTaskList} />
             <View style={styles.header}>
-                <Provider>
-                    <Menu
-                        visible={menuVisible}
-                        onDismiss={() => setMenuVisible(false)}
-                        anchor={<IconButton onPress={() => setMenuVisible(true)} style={styles.menuIcon} icon='dots-vertical' /> }
-                        >
-                        <Menu.Item leadingIcon={'sort'} onPress={() => { }} title="Sort A-Z" />
-                        <Menu.Item leadingIcon={'sort-bool-ascending-variant'} onPress={() => { }} title="Sort by Completed" />
-                        <Divider />
-                        <Menu.Item leadingIcon={'sort-calendar-ascending'} onPress={() => { }} title="Sort by Date" />
-                    </Menu>
-                </Provider>
+                <IconButton iconColor='white' onPress={handleMenuPress} style={styles.menuIcon} icon='dots-vertical' />
+                <Menu
+                    visible={menuVisible}
+                    onDismiss={() => setMenuVisible(false)}
+                    anchor={menuAnchor}
+                >
+                    <Menu.Item leadingIcon={'sort'} onPress={sortAtoZ} title="Sort A-Z" />
+                    <Menu.Item leadingIcon={'sort-bool-ascending-variant'} onPress={sortCompleted} title="Sort by Completed" />
+                    <Divider />
+                    <Menu.Item leadingIcon={'sort-calendar-ascending'} onPress={sortDate} title="Sort by Date" />
+                </Menu>
                 <Text style={styles.title}>List Todo</Text>
             </View>
             <View style={styles.content}>
                 {/* {displayList()} */}
                 <FlatList
                     data={taskList}
-                    renderItem={({ item, index }) => <TaskCard {...item} taskList={taskList} setTaskList={setTaskList} isEditing={isEditing} setIsEditing={setIsEditing} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
+                    renderItem={({ item, index }) => <TaskCard {...item} taskList={taskList} setTaskList={setTaskList} index={index} deleteTodo={deleteTodo} editTodo={editTodo} />}
                     keyExtractor={(item, index) => { return index }}
                     ListEmptyComponent={() => <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#999', textAlign: 'center', marginTop: 40 }}>No Task Available</Text>}
                 />
@@ -145,9 +192,6 @@ const styles = StyleSheet.create({
     header: {
         flex: 1,
         backgroundColor: 'crimson',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        alignItems: 'center',
     },
     content: {
         flex: 5,
@@ -168,7 +212,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     menuIcon: {
-        bottom: 10,
-        right: 10,
+        // position: 'absolute',
+        right: 0,
+        top: 10,
+        color: 'white',
     },
 })
