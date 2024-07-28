@@ -1,6 +1,6 @@
 import { FlatList, Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
-import { AnimatedFAB, Button, Card, Checkbox, Divider, IconButton, Menu, Provider, Snackbar, Text, TextInput } from 'react-native-paper'
+import { AnimatedFAB, Appbar, Button, Card, Checkbox, Divider, IconButton, Menu, Provider, Snackbar, Text, TextInput } from 'react-native-paper'
 import CreateTodo from './CreateTodo'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -142,13 +142,18 @@ const ListTodo = () => {
                 extended={true}
                 onPress={() => setShowTodoForm(true)}
             />
+            <Appbar.Header style={{backgroundColor:'crimson'}}>
+                <Appbar.Content title="Todo" color='#fff' />
+                {/* <Appbar.Action icon="magnify" onPress={()=>{}} /> */}
+                <Appbar.Action icon="dots-vertical" color='#fff' onPress={handleMenuPress} />
+            </Appbar.Header>
             <Snackbar
                 visible={showFeedback}
-                onDismiss={()=>{setShowFeedback(false)}}
+                onDismiss={() => { setShowFeedback(false) }}
                 duration={1000}
                 action={{
                     label: 'Ok',
-                    onPress:()=>{
+                    onPress: () => {
                         setShowFeedback(false);
                     }
                 }}>
@@ -156,7 +161,7 @@ const ListTodo = () => {
             </Snackbar>
             <CreateTodo editTodo={editTodo} visible={showTodoForm} setVisible={setShowTodoForm} taskList={taskList} setTaskList={setTaskList} />
             <View style={styles.header}>
-                <IconButton iconColor='white' onPress={handleMenuPress} style={styles.menuIcon} icon='dots-vertical' />
+                {/* <IconButton iconColor='white' onPress={handleMenuPress} style={styles.menuIcon} icon='dots-vertical' /> */}
                 <Menu
                     visible={menuVisible}
                     onDismiss={() => setMenuVisible(false)}
@@ -190,7 +195,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f0f0f0',
     },
     header: {
-        flex: 1,
+        flex: 0.6,
+        justifyContent: 'center',
         backgroundColor: 'crimson',
     },
     content: {
@@ -207,7 +213,7 @@ const styles = StyleSheet.create({
         zIndex: 10,
     },
     title: {
-        fontSize: 44,
+        fontSize: 40,
         color: 'white',
         textAlign: 'center',
     },
